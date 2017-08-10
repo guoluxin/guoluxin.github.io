@@ -1,0 +1,89 @@
+//创建一个独立模块
+angular.module("Ctrls",[]).controller("navCtrl",["$scope",function($scope){
+	//模拟导航栏的各个标题
+	$scope.navs=[
+        {"link":"#/index","icon":"icon-home","text":"今日一刻"},
+        {"link":"#/old","icon":"icon-file-empty","text":"往期内容"},
+        {"link":"#/author","icon":"icon-pencil","text":"热门作者"},
+        {"link":"#/category","icon":"icon-menu","text":"栏目浏览"},
+        {"link":"#/favourite","icon":"icon-heart","text":"我的喜欢"},
+        {"link":"#/settings","icon":"icon-cog","text":"设置"}
+
+	    ]
+}])
+//编写index对应的控制器
+.controller("indexCtrl",["$scope","$rootScope","$http","$filter",function($scope,$rootScope,$http,$filter){
+	console.log("indexCtrl");
+	$rootScope.num=0;
+	$rootScope.title="今日一刻"
+	$rootScope.show=true;
+	var d=$filter("date")(new Date(),"yyyy-MM-dd")
+	$scope.time=d
+	console.log(d);
+	$http({
+		url:"./api/index.php",
+		method:"get",
+		params:{"date":d}
+	}).then(function(result){//success已被淘汰以后改用then
+          $scope.posts=result.data.posts;
+          $rootScope.show=false; 
+	});
+}])
+//编写old往期内容对应的控制器
+.controller("oldCtrl",["$scope","$rootScope","$http","$filter",function($scope,$rootScope,$http,$filter){
+	console.log("oldCtrl")
+	$rootScope.num=1;
+	$rootScope.title="往期内容"
+	$rootScope.show=true;
+	var date=new Date();
+	date.setDate(date.getDate()-1);
+	var d=$filter("date")(date,"yyyy-MM-dd");
+	$scope.time=d;
+	console.log(d);
+	$http({
+		url:"./api/old.php",
+		method:"get",
+		params:{"date":d}
+	}).then(function(result){//success已被淘汰以后改用then
+		console.log(result)
+          $scope.posts=result.data.posts;
+          $rootScope.show=false; 
+	});
+}])
+//编写hot热门作者对应的控制器
+.controller("authorCtrl",["$scope","$rootScope","$http",function($scope,$rootScope,$http){
+	console.log("authorCtrl")
+	$rootScope.num=2;
+	$rootScope.title="热门作者"
+	$rootScope.show=true; 
+	$http({
+		url:"./api/author.php",
+		method:"get"
+	}).then(function(result){//success已被淘汰以后改用then
+          $scope.authors=result.data.authors;
+          $rootScope.show=false; 
+	});
+}])
+.controller("categoryCtrl",["$scope","$rootScope","$http",function($scope,$rootScope,$http){
+	console.log("categoryCtrl")
+	$rootScope.num=3;
+	$rootScope.title="栏目浏览"
+	$rootScope.show=true; 
+	$http({
+		url:"./api/category.php",
+		method:"get"
+	}).then(function(result){//success已被淘汰以后改用then
+          $scope.columns=result.data.columns;
+          $rootScope.show=false; 
+	});
+}])
+.controller("favouriteCtrl",["$scope","$rootScope",function($scope,$rootScope){
+	console.log("favouriteCtrl")
+	$rootScope.num=4;
+	$rootScope.title="我的喜欢"	
+}])
+.controller("settingsCtrl",["$scope","$rootScope",function($scope,$rootScope){
+	console.log("settingsCtrl")
+	$rootScope.num=5;
+	$rootScope.title="设置"	
+}])
